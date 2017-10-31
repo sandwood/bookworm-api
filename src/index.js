@@ -1,13 +1,30 @@
 import express from 'express';
 import path from 'path';
+import mongoose from 'mongoose';
+import bodyParser  from 'body-parser';
+import dotenv from 'dotenv';
+import Promise from 'bluebird';
 
+import auth from './routes/auth';
+
+dotenv.config();
 const app = express();
+app.use(bodyParser.json());
+mongoose.Promise = Promise;
+mongoose.connect(process.env.MONGODB_URL, { useMongoClient: true });
 
-app.post('/api/auth', (req,res) => {
-    res.status(400).json({ errors: { global: "Invalid credentials" } });
-})
 
-app.get('/*', (req,res) => {
+app.use(function(req, res, next) {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,OPTIONS,POST,PUT,DELETE');
+    res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers');
+    next();
+});
+
+app.use('/api/auth', auth);
+
+app.get('/*', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 })
 
