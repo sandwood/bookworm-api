@@ -7,7 +7,9 @@ const router = express.Router();
 router.use(authenticate);
 
 router.get("/", (req, res) => {
-  Post.find({}).sort({created_at: -1}).then(posts => res.json({ posts }));
+  Post.find({})
+    .sort({ updatedAt: -1 })
+    .then(posts => res.json({ posts }));
 });
 
 router.post("/", (req, res) => {
@@ -16,4 +18,40 @@ router.post("/", (req, res) => {
     .catch(err => res.status(400).json({ errors: parseErrors(err.errors) }));
 });
 
+router.post("/edit", (req, res) => {
+  const query = { _id: req.body.post._id };
+  const newData = {
+    title: req.body.post.title,
+    content: req.body.post.content
+  };
+
+  Post.findOneAndUpdate(query, newData, { upsert: true })
+    .then(res.json("succesfully saved"))
+    .catch(err => {
+      res.status(500).json({ errors: parseErrors(err.errors) });
+      console.log(err);
+    });
+});
+
+router.post("/delete", (req, res) => {
+  const query = { _id: req.body.post._id };
+
+  Post.findOneAndRemove(query)
+    .then(res.json("성공적으로 지웠습니다."))
+    .catch(err => {
+      res.status(500).json({ errors: parseErrors(err.errors) });
+    });
+});
+
 export default router;
+
+// const query = req.body.post._id;
+
+// Post.findOneAndUpdate(
+//   { _id: query },
+//   { title: req.body.post.title, content: req.body.post.content },
+//   { new: true }
+// ).then(
+//   post =>
+//     post ? res.json({ post: post.toAuthJSON() }) : res.status(400).json({})
+// );
