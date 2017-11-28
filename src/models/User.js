@@ -69,6 +69,6 @@ schema.methods.toAuthJSON = function toAuthJSON() {
     };
 };
 
-schema.plugin(uniqueValidator, { message: "This email is already taken" });
+schema.plugin(uniqueValidator, { message: "이미 가입된 이메일 입니다." });
 
 export default mongoose.model("User", schema);

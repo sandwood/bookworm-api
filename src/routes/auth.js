@@ -11,7 +11,7 @@ router.post("/", (req, res) => {
     if (user && user.isValidPassword(credentials.password)) {
       res.json({ user: user.toAuthJSON() });
     } else {
-      res.status(400).json({ errors: { global: "Invalid credentials" } });
+      res.status(400).json({ errors: { global: "조건 충당하지 않습니다." } });
     }
   });
 });
@@ -36,7 +36,7 @@ router.post("/reset_password_request", (req, res) => {
     } else {
       res
         .status(400)
-        .json({ errors: { global: "There is no user with such email" } });
+        .json({ errors: { global: "그 이메일로 된 사용자가 없습니다." } });
     }
   });
 });
@@ -55,14 +55,14 @@ router.post("/reset_password", (req, res) => {
   const { password, token } = req.body.data;
   jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
     if (err) {
-      res.status(401).json({ errors: { global: "Invalid token " } });
+      res.status(401).json({ errors: { global: "잘못된 토큰입니다." } });
     } else {
       User.findOne({ _id: decoded._id }).then(user => {
         if (user) {
           user.setPassword(password);
           user.save().then(() => res.json({}));
         } else {
-          res.status(404).json({ errors: { global: "Invalid token" } });
+          res.status(404).json({ errors: { global: "잘못된 토큰입니다." } });
         }
       });
     }

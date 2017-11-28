@@ -26,7 +26,7 @@ router.post("/edit", (req, res) => {
   };
 
   Post.findOneAndUpdate(query, newData, { upsert: true })
-    .then(res.json("succesfully saved"))
+    .then(res.json("성공적으로 업데이트 했습니다."))
     .catch(err => {
       res.status(500).json({ errors: parseErrors(err.errors) });
       console.log(err);
